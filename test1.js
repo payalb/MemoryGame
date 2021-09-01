@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", ()=>{
     createBoard();
 
@@ -50,6 +52,9 @@ const cardArray=[{
     img: "images/parrot.jpg"
 }
 ]
+
+cardArray.sort(()=> 0.5 - Math.random());
+
 const grid= document.querySelector(".grid");
 function createBoard(){
     for(let i=0; i< cardArray.length; i++){
@@ -63,30 +68,38 @@ function createBoard(){
 
 var cardsChosen= [];
 var cardsChosenId= [];
-var count=0;
+var cardsWon= [];
+var result= document.querySelector("#result");
 
 function flipcard(){
     var cardId= this.getAttribute("data-id");
-    console.log(cardArray[cardId].name+" is name")
-    cardsChosen.push(cardArray[cardId])
+    cardsChosen.push(cardArray[cardId].name)
     cardsChosenId.push(cardId);
-    console.log(this.src+"******thos")
     this.setAttribute("src", cardArray[cardId].img);
-    count++;
-    console.log(count+"***********count")
-    console.log(cardId+ "**************cardid");
-    if(count % 2 == 0 && count != 0){
-       console.log(cardsChosen[count-1].name)
-       console.log(cardsChosen[count-2].name)
-        if(cardsChosen[count-1].name !== cardsChosen[count-2].name){
-            console.log("in if")
-          var cardname1= cardsChosen.pop().name; 
-          var cardname2= cardsChosen.pop().name;
-          var imgArr= document.querySelectorAll('img')
-       //   imgArr[cardsChosenId-1].src="images/print/jpg"
-         // imgArr[cardsChosenId-2].src="images/print/jpg"
-         // document.getElementsByTagName("img")[count-1].src="images/print.jpg"
-           //document.getElementsByTagName("img")[count-1].src="images/print.jpg"
-        }   
+    if(cardsChosen.length===2){
+        setTimeout(checkForMatch, 500);
+    }
+}
+
+function checkForMatch(){
+    var cards= document.querySelectorAll("img");
+    const optionIdOne= cardsChosenId[0];
+    const optionIdTwo= cardsChosenId[1];
+    if(cardsChosen[0]=== cardsChosen[1]){
+        alert("Match found!!")
+        cards[optionIdOne].setAttribute("src", "images/white.jpg");
+        cards[optionIdTwo].setAttribute("src", "images/white.jpg");
+        cardsWon.push(cardsChosen);
+    }else{
+        cards[optionIdOne].setAttribute("src", "images/print.jpg");
+        cards[optionIdTwo].setAttribute("src", "images/print.jpg");
+        alert("Try again!!")
+    }
+    cardsChosen=[]
+    cardsChosenId=[]
+    result.textContent= cardsWon.length
+    if(cardsWon.length=== cardArray.length/2){
+        result.textContent= "Congratulations, completed!"
+        location.reload();
     }
 }
